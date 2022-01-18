@@ -42,6 +42,7 @@ public class BookController {
         Optional<Books> results= bookCacheService.getBooks(id);
         if (results.isPresent()){
             bookresult = results.get();
+            bookresult.setCached(true);
             logger.info("results from cache");
 
         } else{

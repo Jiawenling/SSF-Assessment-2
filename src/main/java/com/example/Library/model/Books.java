@@ -67,7 +67,7 @@ public class Books implements Serializable {
         book.setId(o.getString("key"));
         book.setCached(false);
         book.setDescription(o.getString("description"));
-        book.setExcerpt(o.getJsonArray("excerpt").toString());
+        book.setExcerpt(o.getString("excerpt"));
         return book;
     }
 

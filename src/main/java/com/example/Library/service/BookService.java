@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -91,14 +92,17 @@ public class BookService {
             JsonObject data = reader.readObject();
             String description = data.getJsonString("description").toString();
             String title = data.getJsonString("title").toString();
-            JsonArray excerpt = data.getJsonArray("excerpts");
+            List<String> excerpts = data.getJsonArray("excerpts").stream()
+                    .map(v -> (JsonObject) v)
+                    .map(v -> v.getString("excerpt")).toList();
+
 
             JsonObject bookJson = Json.createObjectBuilder()
                     .add("title", title)
                     .add("key", id)
                     .add("cached", false)
                     .add("description", description)
-                    .add("excerpt", Json.createArrayBuilder().add(excerpt))
+                    .add("excerpt", excerpts.get(0))
                     .build();
 
             return bookJson;
