@@ -66,12 +66,14 @@ public class BookService {
                     .forEach(v -> {
                         Books book = new Books();
                         book.setTitle(v.getString("title"));
-                        book.setUrl(searchURL+v.getJsonString("key"));
+                        book.setUrl(searchURL+v.getJsonString("key").getString());
+                        book.setId(v.getJsonString("key").getString().replace("/works/",""));
                         bookList.add(book);
                     });
 
             logger.info("First item in list: " + bookList.get(0).getTitle());
         logger.info("First item in url: " + bookList.get(0).getUrl());
+        logger.info("First item in key: " + bookList.get(0).getId());
             return bookList;
     }
 

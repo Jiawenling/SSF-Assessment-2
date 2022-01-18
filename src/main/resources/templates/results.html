@@ -8,7 +8,8 @@
 <h1>Search result for <code data-th-text="${searchTerm}"></code></h1>
 
 <h2 th:each="t:${searchResults}">
-    <a th:href="@{${t.getUrl()}}" th:text="${t.getTitle}">Links</a>
+<!--    <a th:href="@{${t.getId()}}" th:text="${t.getTitle}">Links</a>-->
+    <a th:href="@{/book/{id}(id=${t.getId()})}" th:text="${t.getTitle}">Links</a>
 </h2>
 
 
