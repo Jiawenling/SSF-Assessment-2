@@ -1,5 +1,6 @@
 package com.example.Library.service;
 
+import com.example.Library.LibraryApplication;
 import com.example.Library.model.Books;
 import jakarta.json.*;
 import org.slf4j.Logger;
@@ -21,9 +22,9 @@ import java.util.List;
 public class BookService {
 
 
-    private Logger logger = LoggerFactory.getLogger(BookService.class);
+    private Logger logger = LoggerFactory.getLogger(LibraryApplication.class);
 
-    public List<String > search(String searchTerm) throws IOException {
+    public List<Books> search(String searchTerm) throws IOException {
         searchTerm = searchTerm.trim().replaceAll("\\s","+");
         logger.info("searchterm is: "+ searchTerm);
         RestTemplate template = new RestTemplate();
@@ -50,19 +51,27 @@ public class BookService {
                                 .add("key", v.getJsonString("key")));
                     });
 
-            return buildUrl(ob.build());
+            return buildBooks(ob.build());
 
         }
     }
 
-    public List<String> buildUrl(JsonArray jsonArray){
-        List<String> urlList = new ArrayList<>();
+    public List<Books> buildBooks(JsonArray jsonArray){
+        List<Books> bookList = new ArrayList<>();
         String searchURL = "https://openlibrary.org";
             jsonArray.stream()
                     .map(v->(JsonObject)v)
                     .forEach(v -> {
-                        urlList.add(searchURL+v.getString("key"));
+                        Books book = new Books();
+                        book.setTitle(v.getString("title"));
+                        book.setUrl(searchURL+ v.getString("key"));
+                        bookList.add(book);
                     });
-            return urlList;
+
+            logger.info("First item in list: " + bookList.get(0).getTitle());
+
+            return bookList;
     }
+
+
 }

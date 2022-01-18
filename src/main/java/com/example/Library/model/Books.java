@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Books implements Serializable {
 
     private String title;
-    private String worksId;
+    private String url;
 
     public String getTitle() {
         return title;
@@ -15,12 +15,12 @@ public class Books implements Serializable {
         this.title = title;
     }
 
-    public void setWorksId(String worksId) {
-        this.worksId = worksId;
+    public void setUrl(String worksId) {
+        this.url = url;
     }
 
-    public String getWorksId() {
-        return worksId;
+    public String getUrl() {
+        return url;
 
 
     }
