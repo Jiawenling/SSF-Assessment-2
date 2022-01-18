@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <title>Find a book</title>
 </head>
-<body th:object>
+<body>
     <h1>Book Search</h1>
 
-    <input type="text" th:field=""${book.title}>
-    <button type="submit" th:action="@{/}" formmethod="post"></button>
+    <form action="/results" method="get">
+
+        <input type="text" name = "searchTerm" id = "searchTerm" required>
+        <button type="submit">Search</button>
+    </form>
+
+
 
 </body>
 </html>

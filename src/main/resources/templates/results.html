@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+</head>
+<body>
+<h1>Search result for <code data-th-text="${searchTerm}"></code></h1>
+
+<h2 th:each="t:${searchResults}"></h2>
+<a href="${t}"></a>
+
+<a href="/" >Back</a>
+
+</body>
+</html>

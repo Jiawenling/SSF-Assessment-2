@@ -13,6 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class BookService {
 
     private Logger logger = LoggerFactory.getLogger(BookService.class);
 
-    public JsonArray search(String searchTerm) throws IOException {
+    public List<String > search(String searchTerm) throws IOException {
         searchTerm = searchTerm.trim().replaceAll("\\s","+");
         logger.info("searchterm is: "+ searchTerm);
         RestTemplate template = new RestTemplate();
@@ -49,17 +50,18 @@ public class BookService {
                                 .add("key", v.getJsonString("key")));
                     });
 
-            return ob.build();
+            return buildUrl(ob.build());
+
         }
     }
 
     public List<String> buildUrl(JsonArray jsonArray){
-        List<String> urlList = Collections.emptyList();
+        List<String> urlList = new ArrayList<>();
         String searchURL = "https://openlibrary.org";
             jsonArray.stream()
                     .map(v->(JsonObject)v)
                     .forEach(v -> {
-                        urlList.add(searchURL+v.getString("key")+".json");
+                        urlList.add(searchURL+v.getString("key"));
                     });
             return urlList;
     }

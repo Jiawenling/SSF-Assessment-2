@@ -24,27 +24,27 @@ public class BookRestController {
     @Autowired
     BookService bookService;
 
-    @GetMapping("/")
-    public ResponseEntity<String> showWeather(@RequestParam String searchTerm) {
-
-
-        try{
-
-            Optional<JsonArray> opt = Optional.of(bookService.search(searchTerm));
-            if(opt.isEmpty()){
-                logger.info("City information retrieved from cache");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No results found");
-            } else{
-                return ResponseEntity.ok(opt.get().toString());
-
-            }
-
-
-        } catch(IOException e){
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No results found");
-        }
-
-
-    }
+//    @GetMapping("/")
+//    public ResponseEntity<String> showWeather(@RequestParam String searchTerm) {
+//
+//
+//        try{
+//
+//            Optional<JsonArray> opt = Optional.of(bookService.search(searchTerm));
+//            if(opt.isEmpty()){
+//                logger.info("City information retrieved from cache");
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No results found");
+//            } else{
+//                return ResponseEntity.ok(opt.get().toString());
+//
+//            }
+//
+//
+//        } catch(IOException e){
+//
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No results found");
+//        }
+//
+//
+//    }
 }
