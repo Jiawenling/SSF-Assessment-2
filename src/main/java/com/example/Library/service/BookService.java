@@ -41,6 +41,8 @@ public class BookService {
             JsonReader reader = Json.createReader(is);
             JsonObject data = reader.readObject();
             JsonArray fullsearchResults = data.getJsonArray("docs");
+            JsonObject bookKey = (JsonObject) fullsearchResults.get(0);
+            logger.info("key from results= " + bookKey.getJsonString("key"));
 
             JsonArrayBuilder ob = Json.createArrayBuilder();
 
@@ -64,12 +66,12 @@ public class BookService {
                     .forEach(v -> {
                         Books book = new Books();
                         book.setTitle(v.getString("title"));
-                        book.setUrl(searchURL+ v.getString("key"));
+                        book.setUrl(searchURL+v.getJsonString("key"));
                         bookList.add(book);
                     });
 
             logger.info("First item in list: " + bookList.get(0).getTitle());
-
+        logger.info("First item in url: " + bookList.get(0).getUrl());
             return bookList;
     }
 

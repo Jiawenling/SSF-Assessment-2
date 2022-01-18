@@ -26,14 +26,11 @@ public class SearchController {
     public String showResults(@RequestParam(required = true) String searchTerm, Model model) throws IOException {
         List<Books> searchResults = bookService.search(searchTerm);
         logger.info("First item in controller: " + searchResults.get(0).getTitle());
+        logger.info("First item in controller: " + searchResults.get(0).getUrl());
         model.addAttribute("searchTerm", searchTerm);
         model.addAttribute("searchResults",searchResults);
         return "results";
     }
 
-}
-lts);
-        return "results";
-    }
 
 }
