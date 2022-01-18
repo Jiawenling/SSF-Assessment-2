@@ -4,7 +4,18 @@
     <meta charset="UTF-8">
     <title>Book Information</title>
 </head>
-<body>
+<body th:object="${book}">
+<h1>Title</h1>
+<h1 th:text="*{title}"></h1>
+
+<h1>Description</h1>
+<h1 th:text="*{description}"></h1>
+
+<h1>Excerpt</h1>
+<h1 th:text="*{excerpt}"></h1>
+
+<h1>Cached</h1>
+<h1 th:text="*{cached}"></h1>
 
 </body>
 </html>

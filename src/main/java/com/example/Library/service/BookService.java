@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.awt.print.Book;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,15 +26,15 @@ public class BookService {
     private Logger logger = LoggerFactory.getLogger(LibraryApplication.class);
 
     public List<Books> search(String searchTerm) throws IOException {
-        searchTerm = searchTerm.trim().replaceAll("\\s","+");
-        logger.info("searchterm is: "+ searchTerm);
+        searchTerm = searchTerm.trim().replaceAll("\\s", "+");
+        logger.info("searchterm is: " + searchTerm);
         RestTemplate template = new RestTemplate();
         String url = UriComponentsBuilder
                 .fromUriString("http://openlibrary.org/search.json")
                 .queryParam("q", searchTerm)
                 .queryParam("limit", 20)
                 .toUriString();
-        logger.info("url is: "+ url);
+        logger.info("url is: " + url);
         RequestEntity<Void> req = RequestEntity.get(url).build();
         ResponseEntity<String> resp = template.exchange(req, String.class);
 
@@ -47,9 +48,10 @@ public class BookService {
             JsonArrayBuilder ob = Json.createArrayBuilder();
 
             fullsearchResults.stream()
-                    .map(v-> (JsonObject)v)
-                    .forEach(v->{ ob.add(Json.createObjectBuilder()
-                                .add("title",v.getJsonString("title"))
+                    .map(v -> (JsonObject) v)
+                    .forEach(v -> {
+                        ob.add(Json.createObjectBuilder()
+                                .add("title", v.getJsonString("title"))
                                 .add("key", v.getJsonString("key")));
                     });
 
@@ -58,24 +60,59 @@ public class BookService {
         }
     }
 
-    public List<Books> buildBooks(JsonArray jsonArray){
+    public List<Books> buildBooks(JsonArray jsonArray) {
         List<Books> bookList = new ArrayList<>();
         String searchURL = "https://openlibrary.org";
-            jsonArray.stream()
-                    .map(v->(JsonObject)v)
-                    .forEach(v -> {
-                        Books book = new Books();
-                        book.setTitle(v.getString("title"));
-                        book.setUrl(searchURL+v.getJsonString("key").getString());
-                        book.setId(v.getJsonString("key").getString().replace("/works/",""));
-                        bookList.add(book);
-                    });
+        jsonArray.stream()
+                .map(v -> (JsonObject) v)
+                .forEach(v -> {
+                    Books book = new Books();
+                    book.setTitle(v.getString("title"));
+                    book.setUrl(searchURL + v.getJsonString("key").getString());
+                    book.setId(v.getJsonString("key").getString().replace("/works/", ""));
+                    bookList.add(book);
+                });
 
-            logger.info("First item in list: " + bookList.get(0).getTitle());
+        logger.info("First item in list: " + bookList.get(0).getTitle());
         logger.info("First item in url: " + bookList.get(0).getUrl());
         logger.info("First item in key: " + bookList.get(0).getId());
-            return bookList;
+        return bookList;
     }
 
+    public Books searchBook(String id) throws IOException {
+        RestTemplate template = new RestTemplate();
+        String url = "https://openlibrary.org/works/" + id + ".json";
+        logger.info("url is: " + url);
+        RequestEntity<Void> req = RequestEntity.get(url).build();
+        ResponseEntity<String> resp = template.exchange(req, String.class);
 
+        try (InputStream is = new ByteArrayInputStream(resp.getBody().getBytes())) {
+            JsonReader reader = Json.createReader(is);
+            JsonObject data = reader.readObject();
+            String description = data.getJsonString("description").toString();
+            String title = data.getJsonString("title").toString();
+            JsonArray excerpt = data.getJsonArray("excerpts");
+
+            JsonObject bookJson = Json.createObjectBuilder()
+                    .add("title", title)
+                    .add("key", id)
+                    .add("cached", false)
+                    .add("description", description)
+                    .add("excerpt", Json.createArrayBuilder().add(excerpt))
+                    .build();
+
+            return jsonToBook(bookJson);
+        }
+
+    }
+
+    public Books jsonToBook(JsonObject o){
+        Books book = new Books();
+        book.setTitle(o.getString("title"));
+        book.setId(o.getString("key"));
+        book.setCached(false);
+        book.setDescription(o.getString("description"));
+        book.setExcerpt(o.getJsonArray("excerpt").toString());
+        return book;
+    }
 }
