@@ -6,16 +6,18 @@
 </head>
 <body th:object="${book}">
 <h1>Title</h1>
-<h1 th:text="*{title}"></h1>
+<h3 th:text="*{title}"></h3>
 
-<h1>Description</h1>
-<h1 th:text="*{description}"></h1>
+<h3>Description</h3>
+<h3 th:text="*{description}"></h3>
 
-<h1>Excerpt</h1>
-<h1 th:text="*{excerpt}"></h1>
+<h3>Excerpt</h3>
+<h3 th:text="*{excerpt}"></h3>
 
-<h1>Cached</h1>
-<h1 th:text="*{cached}"></h1>
+<h3>Cached</h3>
+<h3 th:text="*{cached}"></h3>
+
+<a href="/" >Back</a>
 
 </body>
 </html>

@@ -79,7 +79,7 @@ public class BookService {
         return bookList;
     }
 
-    public Books searchBook(String id) throws IOException {
+    public JsonObject searchBook(String id) throws IOException {
         RestTemplate template = new RestTemplate();
         String url = "https://openlibrary.org/works/" + id + ".json";
         logger.info("url is: " + url);
@@ -101,18 +101,10 @@ public class BookService {
                     .add("excerpt", Json.createArrayBuilder().add(excerpt))
                     .build();
 
-            return jsonToBook(bookJson);
+            return bookJson;
         }
 
     }
 
-    public Books jsonToBook(JsonObject o){
-        Books book = new Books();
-        book.setTitle(o.getString("title"));
-        book.setId(o.getString("key"));
-        book.setCached(false);
-        book.setDescription(o.getString("description"));
-        book.setExcerpt(o.getJsonArray("excerpt").toString());
-        return book;
-    }
+
 }

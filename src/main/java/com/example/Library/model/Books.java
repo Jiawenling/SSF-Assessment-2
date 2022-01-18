@@ -1,5 +1,7 @@
 package com.example.Library.model;
 
+import jakarta.json.JsonObject;
+
 import java.io.Serializable;
 
 public class Books implements Serializable {
@@ -58,4 +60,17 @@ public class Books implements Serializable {
     public void setCached(boolean cached) {
         this.cached = cached;
     }
+
+    public static Books jsonToBook(JsonObject o){
+        Books book = new Books();
+        book.setTitle(o.getString("title"));
+        book.setId(o.getString("key"));
+        book.setCached(false);
+        book.setDescription(o.getString("description"));
+        book.setExcerpt(o.getJsonArray("excerpt").toString());
+        return book;
+    }
+
+
+
 }
