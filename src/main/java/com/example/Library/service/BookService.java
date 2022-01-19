@@ -44,7 +44,7 @@ public class BookService {
             JsonObject data = reader.readObject();
             JsonArray fullsearchResults = data.getJsonArray("docs");
             JsonObject bookKey = (JsonObject) fullsearchResults.get(0);
-            logger.info("key from results= " + bookKey.getJsonString("key"));
+            logger.info("key from results= " + bookKey.getString("key"));
 
             JsonArrayBuilder ob = Json.createArrayBuilder();
 
@@ -52,8 +52,8 @@ public class BookService {
                     .map(v -> (JsonObject) v)
                     .forEach(v -> {
                         ob.add(Json.createObjectBuilder()
-                                .add("title", v.getJsonString("title"))
-                                .add("key", v.getJsonString("key")));
+                                .add("title", v.getString("title"))
+                                .add("key", v.getString("key")));
                     });
 
             return buildBooks(ob.build());
@@ -69,8 +69,8 @@ public class BookService {
                 .forEach(v -> {
                     Books book = new Books();
                     book.setTitle(v.getString("title"));
-                    book.setUrl(searchURL + v.getJsonString("key").getString());
-                    book.setId(v.getJsonString("key").getString().replace("/works/", ""));
+                    book.setUrl(searchURL + v.getString("key"));
+                    book.setId(v.getString("key").replace("/works/", ""));
                     bookList.add(book);
                 });
 
@@ -90,11 +90,33 @@ public class BookService {
         try (InputStream is = new ByteArrayInputStream(resp.getBody().getBytes())) {
             JsonReader reader = Json.createReader(is);
             JsonObject data = reader.readObject();
-            String description = data.getJsonString("description").toString();
-            String title = data.getJsonString("title").toString();
-            List<String> excerpts = data.getJsonArray("excerpts").stream()
-                    .map(v -> (JsonObject) v)
-                    .map(v -> v.getString("excerpt")).toList();
+            String description;
+            try {
+                description = data.getString("description");
+                if(description==null){
+                    description = data.getJsonObject("description").getString("value");
+                }
+            } catch (Exception e) {
+                description = "No description available";
+            }
+            if(description.isEmpty()){description = "No description available";}
+            String title = data.getString("title").toString();
+            JsonArray excerptsJson = data.getJsonArray("excerpts");
+
+            List<String> excerpts = new ArrayList<>();
+
+            if(excerptsJson!=null){
+
+                try{
+                    excerpts = excerptsJson.stream()
+                            .map(v -> (JsonObject) v)
+                            .map(v -> v.getString("excerpt")).toList();
+                }catch(Exception e){
+                    excerpts.add(excerptsJson.getJsonObject(0).getString("excerpt"));
+                }
+            } else{
+                excerpts.add("No excerpts available");
+            }
 
 
             JsonObject bookJson = Json.createObjectBuilder()
